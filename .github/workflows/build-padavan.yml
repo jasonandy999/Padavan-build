@@ -36,6 +36,30 @@ jobs:
         cd /opt/rt-n56u/toolchain-mipsel
         sh dl_toolchain.sh
         mkdir -p /opt/images/
+        - name: Apply mobile compatible
+      if: github.event.inputs.rainbowui == 'false' && github.event.inputs.mobileui == 'true'
+      run: |
+        cp -f originalui/main.css $WORK_PATH/trunk/user/www/n56u_ribbon_fixed/bootstrap/css
+        cp -f originalui/popup.js $WORK_PATH/trunk/user/www/n56u_ribbon_fixed
+        cp -f originalui/state.js $WORK_PATH/trunk/user/www/n56u_ribbon_fixed
+    - name: Recovery SSP bin files download from remote
+      if: github.event.inputs.ssp == 'true'
+      run: |
+        cp -f ssp/shadowsocks.sh $WORK_PATH/trunk/user/shadowsocks/scripts
+        cp -f ssp/defaults.c $WORK_PATH/trunk/user/shared
+        cp -f ssp/variables.c $WORK_PATH//trunk/user/httpd
+        cp -f ssp/Shadowsocks.asp $WORK_PATH/trunk/user/www/n56u_ribbon_fixed
+        cd $WORK_PATH/trunk/user/shared
+        #sed -i "s#https://cdn.jsdelivr.net/gh/jasonandy999/Padavan-build/ssp/trojan#https://cdn.jsdelivr.net/gh/${{ github.repository_owner }}/Padavan-build/ssp/trojan#g" ./defaults.c
+        #sed -i "s#https://cdn.jsdelivr.net/gh/jasonandy999/Padavan-build/ssp/v2ray#https://cdn.jsdelivr.net/gh/${{ github.repository_owner }}/Padavan-build/ssp/v2ray#g" ./defaults.c
+    - name: Update latest adg
+      run: |
+        cp -f adg/adguardhome.sh $WORK_PATH/trunk/user/adguardhome
+        cp -f adg/defaults.c $WORK_PATH/trunk/user/shared
+        cp -f adg/variables.c $WORK_PATH//trunk/user/httpd
+        cp -f adg/Advanced_adguardhome.asp $WORK_PATH/trunk/user/www/n56u_ribbon_fixed
+        #cd $WORK_PATH/trunk/user/adguardhome
+        #sed -i "s#https://cdn.jsdelivr.net/gh/chongshengB/rt-n56u/trunk/user/adguardhome/AdGuardHome#https://cdn.jsdelivr.net/gh/${{ github.repository_owner }}/Padavan-build/adg/AdGuardHome#g" ./adguardhome.sh
     - name: Build Firmware
       env:
         TNAME: K2P
